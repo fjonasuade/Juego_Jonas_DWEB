@@ -16,6 +16,10 @@ let car = {
 let obstacles = [];
 let signals = [];
 let score = 0;
+//Definimos las variables que se van a ir modificando 
+let baseSpeed = 4;  // Velocidad base del juego
+let speedIncreasePerPoint = 0.1;  // Cuánto aumenta la velocidad por cada punto
+
 
 // Define los carriles
 let lanes = [
@@ -53,7 +57,7 @@ function generateObstacles() {
         let lane = Math.floor(Math.random() * lanes.length);
         let x = lanes[lane];
         let y = -30;
-        obstacles.push({ x, y, width: 40, height: 50, speed: 4});
+        obstacles.push({ x, y, width: 40, height: 50, speed : baseSpeed});
         console.log('Obstacules Generated', {x,y});
     }
 }
@@ -62,7 +66,7 @@ function generateSignals() {
     if (Math.random() < 0.01) {
         let x = Math.random() * (canvas.width - 30);
         let y = -30;
-        signals.push({ x, y, width: 30, height: 30, speed: 3 });
+        signals.push({ x, y, width: 30, height: 30, speed: baseSpeed });
     }
 }
 
@@ -118,6 +122,11 @@ function endGame() {
     ctx.fillStyle = 'black';
     ctx.font = '30px Arial';
     ctx.fillText('¡Juego terminado!', canvas.width / 5, canvas.height / 2);
+    // Dibuja el botón de reinicio
+    ctx.fillStyle = 'black';
+    ctx.fillRect(canvas.width / 3.2 , canvas.height / 2 + 15, 150, 50);
+    ctx.fillStyle = 'white';
+    ctx.fillText('Reiniciar', canvas.width / 2.8, canvas.height / 2 + 50);
 }
 
 function incredeDificulty(){
@@ -145,9 +154,32 @@ function updateGame() {
         ctx.font = '20px Arial';
         ctx.fillText(`Score: ${score}`, 10, 20);
 
+        // Aumenta la velocidad en base al puntaje
+        let speed = baseSpeed + score * speedIncreasePerPoint;
+        car.speed = speed;
+        obstacles.forEach(obs => {
+            obs.speed = speed;
+        });
         requestAnimationFrame(updateGame);
     }
 }
+canvas.addEventListener('click', function(event) {
+    let rect = canvas.getBoundingClientRect();
+    let x = event.clientX - rect.left;
+    let y = event.clientY - rect.top;
+
+    // Si el juego ha terminado y el clic fue dentro del botón de reinicio
+    if (gameOver && x > canvas.width / 2 - 50 && x < canvas.width / 2 + 50 && y > canvas.height / 2 && y < canvas.height / 2 + 50) {
+        // Reinicia el juego
+        gameOver = false;
+        score = 0;
+        car = { x: canvas.width / 2, y: canvas.height - 50, width: 30, height: 50, speed: 2 };
+        obstacles = [];
+        signals = [];
+        lastObstacleY = [canvas.height, canvas.height, canvas.height];
+        requestAnimationFrame(updateGame);
+    }
+});
     document.addEventListener('keydown', moveCar);
     updateGame();
     let obstacleInterval = setInterval(generateObstacles,3000);
