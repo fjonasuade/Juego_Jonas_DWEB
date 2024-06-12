@@ -10,7 +10,7 @@ let car = {
     y: canvas.height - 50,
     width: 30,
     height: 50,
-    speed: 25
+    speed: 30 //25 
 };
 
 let obstacles = [];
@@ -18,7 +18,7 @@ let signals = [];
 let score = 0;
 //Definimos las variables que se van a ir modificando 
 let baseSpeed = 4;  // Velocidad base del juego
-let speedIncreasePerPoint = 0.1;  // Cuánto aumenta la velocidad por cada punto
+let speedIncreasePerPoint = 0.01;  // Cuánto aumenta la velocidad por cada punto
 
 
 // Define los carriles
@@ -173,7 +173,7 @@ canvas.addEventListener('click', function(event) {
         // Reinicia el juego
         gameOver = false;
         score = 0;
-        car = { x: canvas.width / 2, y: canvas.height - 50, width: 30, height: 50, speed: 2 };
+        car = { x: canvas.width / 2, y: canvas.height - 50, width: 30, height: 50, speed: 4  }; //2
         obstacles = [];
         signals = [];
         lastObstacleY = [canvas.height, canvas.height, canvas.height];
